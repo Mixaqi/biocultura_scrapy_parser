@@ -1,11 +1,3 @@
-# Scrapy settings for expositors project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 from __future__ import annotations
 
 BOT_NAME = "expositors"
@@ -63,9 +55,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "expositors.pipelines.ExpositorsPipeline": 300,
-#}
+ITEM_PIPELINES = {
+#"expositors.pipelines.ExpositorsPipeline": 300,
+    "expositors.pipelines.SaveToPostgresPipeLine":400,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

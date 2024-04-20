@@ -1,13 +1,56 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+from __future__ import annotations
+
+import os
+
+import psycopg2
 
 
-# useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+class SaveToPostgresPipeLine:
+    def __init__(self) -> None:
+        self.conn = psycopg2.connect(
+            host = os.environ.get("PG_HOST"),
+            user = os.environ.get("PG_USER"),
+            password = os.environ.get("PG_PASSWORD"),
+            database = os.environ.get("PG_NAME"),
+        )
+        self.cur = self.conn.cursor()
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS expositors(
+            Id SERIAL PRIMARY KEY,
+            title VARCHAR(100),
+            link VARCHAR(150),
+            contact_name VARCHAR(150),
+            email VARCHAR (100),
+            phone VARCHAR(20),
+            country VARCHAR(40))""")
 
-
-class ExpositorsPipeline:
-    def process_item(self, item, spider):
+    def process_item(self, item, spider) -> None:
+        self.cur.execute(""" 
+        INSERT INTO expositors (
+            title,
+            link,
+            contact_name,
+            email,
+            phone,
+            country
+        ) VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+        )""", (
+            item['title'],
+            item['link'],
+            item['contact_name'],
+            item['email'],
+            item['phone'],
+            item['country'],
+        ))
+        self.conn.commit()
         return item
+
+    def close_spider(self, spider) -> None:
+        self.cur.close()
+        self.conn.close()
