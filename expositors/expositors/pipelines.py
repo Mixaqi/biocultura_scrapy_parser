@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 import psycopg2
+import scrapy
 
 
 class SaveToPostgresPipeLine:
@@ -24,7 +25,7 @@ class SaveToPostgresPipeLine:
             phone VARCHAR(20),
             country VARCHAR(40))""")
 
-    def process_item(self, item, spider) -> None:
+    def process_item(self, item: dict[str, str], spider: scrapy.Spider) -> None:
         self.cur.execute(""" 
         INSERT INTO expositors (
             title,
@@ -41,16 +42,16 @@ class SaveToPostgresPipeLine:
             %s,
             %s
         )""", (
-            item['title'],
-            item['link'],
-            item['contact_name'],
-            item['email'],
-            item['phone'],
-            item['country'],
+            item["title"],
+            item["link"],
+            item["contact_name"],
+            item["email"],
+            item["phone"],
+            item["country"],
         ))
         self.conn.commit()
         return item
 
-    def close_spider(self, spider) -> None:
+    def close_spider(self, spider: scrapy.Spider) -> None:
         self.cur.close()
         self.conn.close()
