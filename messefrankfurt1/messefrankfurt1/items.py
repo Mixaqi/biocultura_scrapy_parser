@@ -13,3 +13,4 @@ class Messefrankfurt1Item(scrapy.Item):
     tel: str = Field(default="")
     fax: str = Field(default="")
     email: str = Field(default="")
+    whatsapp_link = Field(default="")
