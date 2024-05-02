@@ -1,12 +1,15 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
+from __future__ import annotations
 
 import scrapy
+from scrapy.item import Field
 
 
 class Messefrankfurt1Item(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    name: str = Field(default="")
+    street: str = Field(default="")
+    city: str = Field(default="")
+    zip_code: str = Field(default="")
+    country: str = Field(default="")
+    tel: str = Field(default="")
+    fax: str = Field(default="")
+    email: str = Field(default="")

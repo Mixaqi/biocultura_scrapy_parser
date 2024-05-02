@@ -23,6 +23,7 @@ class SaveToPostgresPipeLine:
             contact_name VARCHAR(150),
             email VARCHAR (100),
             phone VARCHAR(20),
+            whatsapp_phone VARCHAR(250),
             country VARCHAR(40))""")
 
     def process_item(self, item: dict[str, str], spider: scrapy.Spider) -> None:
@@ -33,6 +34,7 @@ class SaveToPostgresPipeLine:
             contact_name,
             email,
             phone,
+            whatsapp_phone,
             country
         ) VALUES (
             %s,
@@ -40,13 +42,15 @@ class SaveToPostgresPipeLine:
             %s,
             %s,
             %s,
-            %s
+            %s,
+            %s            
         )""", (
             item["title"],
             item["link"],
             item["contact_name"],
             item["email"],
             item["phone"],
+            item["whatsapp_phone"],
             item["country"],
         ))
         self.conn.commit()

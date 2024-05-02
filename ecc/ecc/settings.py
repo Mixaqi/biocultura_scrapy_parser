@@ -1,14 +1,21 @@
-from __future__ import annotations
+# Scrapy settings for ecc project
+#
+# For simplicity, this file contains only settings considered important or
+# commonly used. You can find more settings consulting the documentation:
+#
+#     https://docs.scrapy.org/en/latest/topics/settings.html
+#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "expositors"
+BOT_NAME = "ecc"
 
-SPIDER_MODULES = ["expositors.spiders"]
-NEWSPIDER_MODULE = "expositors.spiders"
+SPIDER_MODULES = ["ecc.spiders"]
+NEWSPIDER_MODULE = "ecc.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "expositors (+http://www.yourdomain.com)"
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+#USER_AGENT = "ecc (+http://www.yourdomain.com)"
+
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
@@ -38,13 +45,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "expositors.middlewares.ExpositorsSpiderMiddleware": 543,
+#    "ecc.middlewares.EccSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "expositors.middlewares.ExpositorsDownloaderMiddleware": 543,
+#    "ecc.middlewares.EccDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -55,10 +62,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-#"expositors.pipelines.ExpositorsPipeline": 300,
-    "expositors.pipelines.SaveToPostgresPipeLine":400,
-}
+#ITEM_PIPELINES = {
+#    "ecc.pipelines.EccPipeline": 300,
+#}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -85,5 +91,3 @@ ITEM_PIPELINES = {
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-FEED_EXPORT_FIELDS = ["title", "link", "contact_name", "email", "phone", "whatsapp_phone", "country"]
-

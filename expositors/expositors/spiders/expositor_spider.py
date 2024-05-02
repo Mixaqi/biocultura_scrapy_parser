@@ -22,6 +22,7 @@ class ExpositorSpider(scrapy.Spider):
         contact_name: str = response.css("div.expositor-contact p::text")[0].get()
         email: str = response.css("div.expositor-contact p::text")[1].get()
         phone: str = "".join(response.xpath("//div[@class='expositor-contact']/text()").re(r"\S+"))
+        whatsapp_phone: str = f"https://api.whatsapp.com/send/?phone={phone}&text&type=phone_number&app_absent=0"
         country: str = response.css("div.expositor-contact p::text")[-1].get()
 
         yield {"title": title,
@@ -29,5 +30,6 @@ class ExpositorSpider(scrapy.Spider):
                 "contact_name": contact_name,
                 "email": email,
                 "phone": phone,
+                "whatsapp_phone": whatsapp_phone,
                 "country": country,
         }
