@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Generator, Optional
+import html
+from typing import Generator
 
 import scrapy
 from dotenv import load_dotenv
-from scrapy import Request
 
 from ..items import Messefrankfurt1Item
 from ..whatsapp_service import WhatsappService
+from .exhibitor2 import clean_phone_number
 
 load_dotenv()
 
@@ -19,17 +20,17 @@ class ExhibitorsSpider(scrapy.Spider):
     )
     api_key = "LXnMWcYQhipLAS7rImEzmZ3CkrU033FMha9cwVSngG4vbufTsAOCQQ=="
 
-    def start_requests(self) -> Generator[Request, None, None]:
+    def start_requests(self):
 
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
-            'Content-Type': 'text/html; charset=utf-8',
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+            "Content-Type": "text/html; charset=utf-8",
         }
         for url in self.start_urls:
             headers = {"Apikey": self.api_key}
             yield scrapy.Request(url, headers=headers, callback=self.parse)
 
-    async def parse(self, response) -> Generator[Messefrankfurt1Item, None, None]:
+    async def parse(self, response):
         data = response.json()
         hits = data.get("result", {}).get("hits", [])
 
@@ -38,30 +39,21 @@ class ExhibitorsSpider(scrapy.Spider):
         for hit in hits:
             exhibitor = hit.get("exhibitor", {})
             item = Messefrankfurt1Item()
-            item["name"] = exhibitor.get("name")
+            item["name"] = html.unescape(exhibitor.get("name", ""))  # Декодирование HTML-сущностей
+
             address = exhibitor.get("address", {})
-            item["street"] = address.get("street")
             item["city"] = address.get("city")
             item["zip_code"] = address.get("zip")
             item["country"] = address.get("country", {}).get("label")
-            item["tel"] = address.get("tel")
-            item["fax"] = address.get("fax")
+            item["tel"] = clean_phone_number(address.get("tel"))
+            item["fax"] = clean_phone_number(address.get("fax"))
             item["email"] = address.get("email")
 
-            # Обработка номера телефона перед вызовом метода format_to_whatsapp_link
-            phone_number = address.get("tel")
-            if phone_number:
-                phone_number = phone_number.replace(" ", "")
-                if phone_number.startswith("+"):
-                    phone_number = phone_number[1:]
-
-            # Логирование значений перед отправкой запроса
             self.logger.info(f"Processing item {item['name']}")
-            self.logger.info(f"Phone number: {phone_number}")
+            self.logger.info(f"Cleaned phone number: {item['tel']}")
 
-            whatsapp_link: Optional[str] = await whatsapp_service.format_to_whatsapp_link(phone_number)
+            whatsapp_link = await whatsapp_service.format_to_whatsapp_link(item["tel"])
 
-            # Логирование результата запроса
             if whatsapp_link:
                 self.logger.info(f"WhatsApp link: {whatsapp_link}")
             else:

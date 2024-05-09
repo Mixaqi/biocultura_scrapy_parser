@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import html
+
 import scrapy
 
 from ..items import Messefrankfurt1Item
@@ -22,6 +25,11 @@ class Exhibitor2Spider(scrapy.Spider):
     api_key = "LXnMWcYQhipLAS7rImEzmZ3CkrU033FMha9cwVSngG4vbufTsAOCQQ=="
 
     def start_requests(self):
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+            "Content-Type": "text/html; charset=utf-8",
+        }
         for url in self.start_urls:
             headers = {"Apikey": self.api_key}
             yield scrapy.Request(url, headers=headers, callback=self.parse)
